@@ -22,7 +22,7 @@ struct node {
 
     //fields
     int data;
-    unique_ptr<node> next;
+    node *next;
     //node *next;
 };
 
@@ -30,8 +30,8 @@ class linked_list {
     private:
     // smart pointer with wrapper around it
     // initialization
-    unique_ptr<node> head = make_unique<node>();
-    unique_ptr<node> tail = make_unique<node>();
+    node *head = new node();
+    node *tail = new node();
     //node *head, *tail;
 
     public:
@@ -43,12 +43,12 @@ class linked_list {
 
 
     void create_node(int value) {
-        unique_ptr<node> temp = make_unique<node>(); 
+        node *temp = new node(); 
+
         // To access members of a structure (node) 
         // through a pointer (temp), use the arrow operator.
         temp->data = value;
         temp->next = NULL;
-
 
         if (head == NULL) {
             head=temp;
@@ -61,14 +61,22 @@ class linked_list {
     }
 
     void insert_start(int value) {
-        unique_ptr<node> temp = make_unique<node>();
+        node *temp = new node();
+
+        node *copy = new node();
+
         temp->data=value;
+        head = temp;
+        
         temp->next=head;
-        head=temp;
+        *head=*temp;
+
+        cout << "next node after head is 50 " << endl;
+        cout << "the next node after head really is: " << head->next->data << endl;
     }
 
     void insert_end(int value) {
-        unique_ptr<node> temp = make_unique<node>();
+        node *temp = new node();
         temp->data = value;
         temp->next = NULL;
         tail->next = temp;
@@ -77,9 +85,9 @@ class linked_list {
 
 
     void insert_position(int pos, int value) {
-        unique_ptr<node> pre = make_unique<node>();
-        unique_ptr<node> cur = make_unique<node>();
-        unique_ptr<node> temp = make_unique<node>();
+        node *pre = new node();
+        node *cur = new node();
+        node *temp = new node();
 
         cur = head;
 
@@ -94,7 +102,7 @@ class linked_list {
     }
 
     void delete_first() {
-        unique_ptr<node> temp = make_unique<node>();
+        node *temp = new node();
 
         temp = head;
         head = head->next;
@@ -102,8 +110,8 @@ class linked_list {
     }
 
     void delete_last() {
-        unique_ptr<node> pre = make_unique<node>();
-        unique_ptr<node> cur = make_unique<node>();
+        node *pre = new node();
+        node *cur = new node();
 
         cur = head;
 
@@ -117,8 +125,8 @@ class linked_list {
 
 
     void delete_position(int pos) {
-        unique_ptr<node> pre = make_unique<node>();
-        unique_ptr<node> cur = make_unique<node>();
+        node *pre = new node();
+        node *cur = new node();
 
         cur = head;
         
@@ -131,8 +139,13 @@ class linked_list {
     }
 
 
+    //void split_position() {
+    //    
+    //}
+    
+
     void display_nodes() {
-        unique_ptr<node> temp = make_unique<node>();
+        node *temp = new node();
         //node *temp=new node;
         //temp=head;
         //while(temp!=NULL)
@@ -144,9 +157,11 @@ class linked_list {
 
         while (temp->next != NULL) {
             cout << temp->data << endl;
+            *temp = *head->next;
         }
+        cout << temp->data << endl;
     }
-}
+};
 // https://www.codementor.io/@codementorteam/a-comprehensive-guide-to-implementation-of-singly-linked-list-using-c_plus_plus-ondlm5azr
 
 
@@ -160,45 +175,45 @@ class linked_list {
 
 int main()
 {
-	list obj;
-	obj.createnode(25);
-	obj.createnode(50);
-	obj.createnode(90);
-	obj.createnode(40);
+    linked_list obj;
+	obj.create_node(25);
+	obj.create_node(50);
+	obj.create_node(90);
+	obj.create_node(40);
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"---------------Displaying All nodes---------------";
 	cout<<"\n--------------------------------------------------\n";
-	obj.display();
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"-----------------Inserting At End-----------------";
 	cout<<"\n--------------------------------------------------\n";
-	obj.createnode(55);
-	obj.display();
+	obj.create_node(55);
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"----------------Inserting At Start----------------";
 	cout<<"\n--------------------------------------------------\n";
 	obj.insert_start(50);
-	obj.display();
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"-------------Inserting At Particular--------------";
 	cout<<"\n--------------------------------------------------\n";
 	obj.insert_position(5,60);
-	obj.display();
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"----------------Deleting At Start-----------------";
 	cout<<"\n--------------------------------------------------\n";
 	obj.delete_first();
-	obj.display();
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"-----------------Deleing At End-------------------";
 	cout<<"\n--------------------------------------------------\n";
 	obj.delete_last();
-	obj.display();
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"--------------Deleting At Particular--------------";
 	cout<<"\n--------------------------------------------------\n";
 	obj.delete_position(4);
-	obj.display();
+	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	system("pause");
 	return 0;
