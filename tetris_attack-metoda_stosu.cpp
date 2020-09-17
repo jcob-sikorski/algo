@@ -7,23 +7,12 @@
 using namespace std;
 
 
-
-
-// maybe I have to use shared_pointer instead of a unique one?
-
-
-
-
-
-
-
 struct node {
     // we can have indefinite amounts and types of data
 
     //fields
     int data;
     node *next;
-    //node *next;
 };
 
 class linked_list {
@@ -32,7 +21,7 @@ class linked_list {
     // initialization
     node *head = new node();
     node *tail = new node();
-    //node *head, *tail;
+    int size = 0;
 
     public:
     // public constructor - without public, I wouldn't have a way to create linked_list
@@ -41,8 +30,19 @@ class linked_list {
         tail = NULL;
     }
 
+    void insert_start(int value) {
+        node *temp = new node();
 
-    void create_node(int value) {
+        node *copy = new node();
+
+        temp->data=value;
+        temp->next=head;
+        head = temp;
+
+        size++;
+    }
+
+    void insert_end(int value) {
         node *temp = new node(); 
 
         // To access members of a structure (node) 
@@ -58,40 +58,19 @@ class linked_list {
             tail->next = temp;
             tail = temp;
         }
-    }
 
-    void insert_start(int value) {
-        node *temp = new node();
-
-        node *copy = new node();
-
-        temp->data=value;
-        head = temp;
-        
-        temp->next=head;
-        *head=*temp;
-
-        cout << "next node after head is 50 " << endl;
-        cout << "the next node after head really is: " << head->next->data << endl;
-    }
-
-    void insert_end(int value) {
-        node *temp = new node();
-        temp->data = value;
-        temp->next = NULL;
-        tail->next = temp;
-        tail = temp;
+        size++;
     }
 
 
-    void insert_position(int pos, int value) {
+    void insert_index(int index, int value) {
         node *pre = new node();
         node *cur = new node();
         node *temp = new node();
 
         cur = head;
 
-        for (int i = 1; i < pos; i++) {
+        for (int i = 0; i < index; i++) {
             pre = cur;
             cur = cur->next;
         }
@@ -99,6 +78,8 @@ class linked_list {
         temp->data = value;
         pre->next = temp;
         temp->next = cur;
+
+        size++;
     }
 
     void delete_first() {
@@ -107,6 +88,8 @@ class linked_list {
         temp = head;
         head = head->next;
         delete temp;
+
+        size--;
     }
 
     void delete_last() {
@@ -119,53 +102,62 @@ class linked_list {
             pre = cur;
             cur = cur->next;
         }
+        pre->next = NULL;
         tail = pre;
         delete cur;
+
+        size--;
     }
 
 
-    void delete_position(int pos) {
+    void delete_index(int index) {
         node *pre = new node();
         node *cur = new node();
 
         cur = head;
         
-        for (int i = 1; i < pos; i++) {
+        for (int i = 0; i < index; i++) {
             pre = cur;
             cur = cur->next;
         }
         pre->next = cur->next;
         delete cur;
+
+        size--;
     }
-
-
-    //void split_position() {
-    //    
-    //}
     
 
     void display_nodes() {
         node *temp = new node();
-        //node *temp=new node;
-        //temp=head;
-        //while(temp!=NULL)
-        //{
-        //  cout<<temp->data<<"\t";
-        //  temp=temp->next;
-        //}
         temp = head;
 
         while (temp->next != NULL) {
             cout << temp->data << endl;
-            *temp = *head->next;
+            temp = temp->next;
         }
         cout << temp->data << endl;
+    }
+
+    node split_index(int index, node ahead) {
+        node *pre = new node;
+        node *cur = new node;
+    
+        node *bhead = new node;
+        cur = ahead;
+    
+        for (int i = 0; i < index; i++) {
+            pre=cur;
+            cur=cur->next;
+        }
+        pre->next = NULL;
+        bhead = cur;
+        return ahead, bhead;
     }
 };
 // https://www.codementor.io/@codementorteam/a-comprehensive-guide-to-implementation-of-singly-linked-list-using-c_plus_plus-ondlm5azr
 
 
-// tworzymy rekursywną funkcję, która dzieli 2 stosy na kolejną połowę jesli ich wielkość się zmieniła i nie znaleziono
+// tworzymy rekursywną funkcję, która dzieli 2 stosy(linked_lists) na kolejną połowę jesli ich wielkość się zmieniła i nie znaleziono
 // żadnych par inwersji - jeśli znaleziono - mergujemy stosy i dzielimy je na połowę
 // warunkiem zakończenia funcji jest przypadek, w którym stosy mają wielkość 0
 // pozostaje tylko pytanie, czy linked_list jest w stanie zapewnić akcje, których potrzebuje owa funkcja
@@ -176,10 +168,11 @@ class linked_list {
 int main()
 {
     linked_list obj;
-	obj.create_node(25);
-	obj.create_node(50);
-	obj.create_node(90);
-	obj.create_node(40);
+	obj.insert_end(25);
+	obj.insert_end(50);
+	obj.insert_end(90);
+	obj.insert_end(40);
+    obj.insert_end(100);
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"---------------Displaying All nodes---------------";
 	cout<<"\n--------------------------------------------------\n";
@@ -187,7 +180,7 @@ int main()
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"-----------------Inserting At End-----------------";
 	cout<<"\n--------------------------------------------------\n";
-	obj.create_node(55);
+	obj.insert_end(55);
 	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"----------------Inserting At Start----------------";
@@ -197,7 +190,7 @@ int main()
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"-------------Inserting At Particular--------------";
 	cout<<"\n--------------------------------------------------\n";
-	obj.insert_position(5,60);
+	obj.insert_index(5,60);
 	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"----------------Deleting At Start-----------------";
@@ -212,7 +205,7 @@ int main()
 	cout<<"\n--------------------------------------------------\n";
 	cout<<"--------------Deleting At Particular--------------";
 	cout<<"\n--------------------------------------------------\n";
-	obj.delete_position(4);
+	obj.delete_index(4);
 	obj.display_nodes();
 	cout<<"\n--------------------------------------------------\n";
 	system("pause");
