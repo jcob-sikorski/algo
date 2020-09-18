@@ -8,20 +8,17 @@ using namespace std;
 
 
 struct node {
-    // we can have indefinite amounts and types of data
-
     //fields
     int data;
     node *next;
 };
 
+
 class linked_list {
     private:
-    // smart pointer with wrapper around it
     // initialization
     node *head = new node();
     node *tail = new node();
-    int size = 0;
 
     public:
     // public constructor - without public, I wouldn't have a way to create linked_list
@@ -38,9 +35,8 @@ class linked_list {
         temp->data=value;
         temp->next=head;
         head = temp;
-
-        size++;
     }
+
 
     void insert_end(int value) {
         node *temp = new node(); 
@@ -58,8 +54,6 @@ class linked_list {
             tail->next = temp;
             tail = temp;
         }
-
-        size++;
     }
 
 
@@ -78,9 +72,8 @@ class linked_list {
         temp->data = value;
         pre->next = temp;
         temp->next = cur;
-
-        size++;
     }
+
 
     void delete_first() {
         node *temp = new node();
@@ -88,9 +81,8 @@ class linked_list {
         temp = head;
         head = head->next;
         delete temp;
-
-        size--;
     }
+
 
     void delete_last() {
         node *pre = new node();
@@ -105,8 +97,6 @@ class linked_list {
         pre->next = NULL;
         tail = pre;
         delete cur;
-
-        size--;
     }
 
 
@@ -122,8 +112,6 @@ class linked_list {
         }
         pre->next = cur->next;
         delete cur;
-
-        size--;
     }
     
 
@@ -138,22 +126,50 @@ class linked_list {
         cout << temp->data << endl;
     }
 
-    node split_index(int index, node ahead) {
-        node *pre = new node;
-        node *cur = new node;
-    
-        node *bhead = new node;
-        cur = ahead;
-    
+
+    linked_list split_index(int index) {
+        node *pre = new node();
+        node *cur = new node();
+
+        node *nd_head = new node();
+        cur = head;
+
         for (int i = 0; i < index; i++) {
             pre=cur;
             cur=cur->next;
         }
+        linked_list obj;
+
+        nd_head = cur;
+
+        obj.set_head(nd_head);
+        obj.set_tail(tail);
+
         pre->next = NULL;
-        bhead = cur;
-        return ahead, bhead;
+        tail = pre;
+
+        return obj;
     }
+
+
+    void set_head(node *head) {
+        this->head = head;
+    }
+    void set_tail(node *tail) {
+        this->tail = tail;
+    }
+
+
+    node* return_head() {
+        return head;
+    }
+    node* return_tail() {
+        return tail;
+    }
+
 };
+
+
 // https://www.codementor.io/@codementorteam/a-comprehensive-guide-to-implementation-of-singly-linked-list-using-c_plus_plus-ondlm5azr
 
 
@@ -167,6 +183,7 @@ class linked_list {
 
 int main()
 {
+    // example
     linked_list obj;
 	obj.insert_end(25);
 	obj.insert_end(50);
@@ -177,37 +194,13 @@ int main()
 	cout<<"---------------Displaying All nodes---------------";
 	cout<<"\n--------------------------------------------------\n";
 	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
-	cout<<"-----------------Inserting At End-----------------";
-	cout<<"\n--------------------------------------------------\n";
-	obj.insert_end(55);
-	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
-	cout<<"----------------Inserting At Start----------------";
-	cout<<"\n--------------------------------------------------\n";
-	obj.insert_start(50);
-	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
-	cout<<"-------------Inserting At Particular--------------";
-	cout<<"\n--------------------------------------------------\n";
-	obj.insert_index(5,60);
-	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
-	cout<<"----------------Deleting At Start-----------------";
-	cout<<"\n--------------------------------------------------\n";
-	obj.delete_first();
-	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
-	cout<<"-----------------Deleing At End-------------------";
-	cout<<"\n--------------------------------------------------\n";
-	obj.delete_last();
-	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
-	cout<<"--------------Deleting At Particular--------------";
-	cout<<"\n--------------------------------------------------\n";
-	obj.delete_index(4);
-	obj.display_nodes();
-	cout<<"\n--------------------------------------------------\n";
+
+    linked_list nd;
+
+    nd = obj.split_index(2);
+
+    cout << "obj tail " << obj.return_tail()->data << "nd head " << nd.return_head()->data << endl;
+
 	system("pause");
 	return 0;
 }
