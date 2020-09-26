@@ -252,6 +252,8 @@ class linked_list {
 
 int main()
 {
+    int n;
+    
     vector<int> arr = {5, 2, 3, 1, 4, 1, 4, 3, 5, 2};
 
     unordered_set<int> dist;
@@ -263,16 +265,19 @@ int main()
     for (int i = 0; i < arr.size(); i++) {
         obj.insert_end(arr.at(i));
 
-        obj.display_nodes();
-
         if (dist.find(obj.return_tail()->data) == dist.end()) {
             dist.insert(obj.return_tail()->data);
         }
         else {
             int data = obj.return_tail()->data;
-
+            
             int index1 = obj.delete_by_data_and_return_index(data);
             int index2 = obj.delete_by_data_and_return_index(data);
+
+
+            if (abs(index1 - index2) > 0) {
+                cout << index2 + 1 << endl;
+            }
 
             steps += (abs(index1 - index2));
         }
