@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "BFS.cpp"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ int main() {
     }
 
     string l; string r;
+
     // make abstract repr of left and right
     for (int i = 0; i < left.size(); i++) {
         if (isdigit(left.at(i))) {
@@ -53,79 +55,100 @@ int main() {
     cout << endl;
 
 
-    unordered_map<char, vector<vector<pair<char, int>>> > corr;
-
-    // initialize vectors by size
-    for (auto kv : varLen) {
-        corr[kv.first] = vector<vector<pair<char, int>>>(kv.second);
+    if (l.size() != r.size()) {
+        cout << 0 << endl;
     }
+    else {
+        unordered_map<char, vector<vector<pair<char, int>>> > corr;
 
-    int LvarLenCounter = 0; int RvarLenCounter = 0;
+        // initialize vectors by size
+        for (auto kv : varLen) {
+            corr[kv.first] = vector<vector<pair<char, int>>>(kv.second);
+        }
 
-    // create correlation between same indexes on both sides
-    // for left side correlating by index
-    for (int i = 0; i < l.size(); i++) {
+        int LvarLenCounter = 0; int RvarLenCounter = 0;
 
-        // if lcell is letter bond lcell with rcell
-        if (isalpha(l.at(i))) {
-            // if rcell is letter bond them
-            if (isalpha(r.at(i))) {
-                corr[l.at(i)][LvarLenCounter].push_back(make_pair(r.at(i), RvarLenCounter));
+        // create correlation between same indexes on both sides
+        // for left side correlating by index
+        for (int i = 0; i < l.size(); i++) {
+
+            // if lcell is letter bond lcell with rcell
+            if (isalpha(l.at(i))) {
+                // if rcell is letter bond them
+                if (isalpha(r.at(i))) {
+                    corr[l.at(i)][LvarLenCounter].push_back(make_pair(r.at(i), RvarLenCounter));
+                }
+                // if rcell is number bond them
+                else {
+                    corr[l.at(i)][LvarLenCounter].push_back(make_pair(r.at(i), -1));
+                }
+
+                // moving in abstract boundaries of vars
+                if (LvarLenCounter < varLen[l.at(i)]-1) {
+                    LvarLenCounter++;
+                }
+                else {
+                    LvarLenCounter = 0;
+                }
             }
-            // if rcell is number bond them
-            else {
-                corr[l.at(i)][LvarLenCounter].push_back(make_pair(r.at(i), -1));
-            }
-            
+
             // moving in abstract boundaries of vars
-            if (LvarLenCounter < varLen[l.at(i)]-1) {
-                LvarLenCounter++;
+            if (isalpha(r.at(i)) && RvarLenCounter < varLen[r.at(i)]-1) {
+                RvarLenCounter++;
+            } 
+            else {
+                RvarLenCounter = 0;
             }
+        }
+
+        LvarLenCounter = 0; RvarLenCounter = 0;
+
+        // for right side correlating by index
+        for (int i = 0; i < r.size(); i++) {
+
+            // if rcell is letter bond rcell with lcell
+            if (isalpha(r.at(i))) {
+                // if lcell is letter bond them
+                if (isalpha(l.at(i))) {
+                    corr[r.at(i)][RvarLenCounter].push_back(make_pair(l.at(i), LvarLenCounter));
+                }
+                // if lcell is number bond them
+                else {
+                    corr[r.at(i)][RvarLenCounter].push_back(make_pair(l.at(i), -1));
+                }
+
+                // moving in abstract boundaries of vars
+                if (RvarLenCounter < varLen[r.at(i)]-1) {
+                    RvarLenCounter++;
+                }
+                else {
+                    RvarLenCounter = 0;
+                }
+            }
+            // moving in abstract boundaries of vars
+            if (isalpha(l.at(i)) && LvarLenCounter < varLen[l.at(i)]-1) {
+                LvarLenCounter++;
+            } 
             else {
                 LvarLenCounter = 0;
             }
         }
 
-        // moving in abstract boundaries of vars
-        if (isalpha(r.at(i)) && RvarLenCounter < varLen[r.at(i)]-1) {
-            RvarLenCounter++;
-        } 
-        else {
-            RvarLenCounter = 0;
+        unordered_map<char, vector<char> > visited;
+
+        for (auto kv: varLen) {
+            visited[kv.first] = vector<char>(varLen[kv.first]);
+            for (int i = kv.second; i > 0; i--) {
+                visited[kv.first][i] = '0';
+            }
         }
+
+
+        for (auto kv: varLen) {
+            for (int i = kv.second; i > 0; i--) {
+                BFS(make_pair(kv.first, i), visited, corr);
+            }
+        }
+        cout << endl;
     }
-
-    LvarLenCounter = 0; RvarLenCounter = 0;
-
-    // for right side correlating by index
-    for (int i = 0; i < r.size(); i++) {
-
-        // if lcell is letter bond lcell with rcell
-        if (isalpha(r.at(i))) {
-            // if rcell is letter bond them
-            if (isalpha(l.at(i))) {
-                corr[r.at(i)][RvarLenCounter].push_back(make_pair(l.at(i), LvarLenCounter));
-            }
-            // if rcell is number bond them
-            else {
-                corr[r.at(i)][RvarLenCounter].push_back(make_pair(l.at(i), -1));
-            }
-
-            // moving in abstract boundaries of vars
-            if (RvarLenCounter < varLen[r.at(i)]-1) {
-                RvarLenCounter++;
-            }
-            else {
-                RvarLenCounter = 0;
-            }
-        }
-        // moving in abstract boundaries of vars
-        if (isalpha(l.at(i)) && LvarLenCounter < varLen[l.at(i)]-1) {
-            LvarLenCounter++;
-        } 
-        else {
-            LvarLenCounter = 0;
-        }
-    }
-    cout << endl;
-}
+}   
