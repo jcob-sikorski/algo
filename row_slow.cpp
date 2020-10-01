@@ -149,6 +149,6 @@ int main() {
                 BFS(make_pair(kv.first, i), visited, corr);
             }
         }
-        cout << endl;
     }
+    return 0;
 }   
