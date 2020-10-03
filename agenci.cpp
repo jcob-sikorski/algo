@@ -21,7 +21,7 @@ private:
 public:
 
     void corr(pair<int, int> p) {
-        if (graph.find(p.first) != graph.end()) {
+        if (graph.find(p.first) == graph.end()) {
             graph[p.first] = vector<int>();
         }
         graph[p.first].push_back(p.second);
@@ -29,47 +29,80 @@ public:
     }
 
 
-    // BFS algorithm
-    int BFS(int startVertex, int id) {
-        vector<bool> visited = vector<bool>(N);
+    int BFS(int x, int y) {
+        vector<int> visx = vector<int>(N, false);
+        vector<int> visy = vector<int>(N, false);
 
-        for (int i = 0; i < N; i++) {
-            visited[i] = false;
-        }
+        list<int> queuex;
+        list<int> queuey;
 
-        list<int> queue;
+        queuex.push_back(x);
+        queuey.push_back(y);
 
-        visited[startVertex] = true;
-        queue.push_back(startVertex);
+        char bit = 'x';
 
-        list<int>::iterator i;
+        int counter = 0;
 
-        while (!queue.empty()) {
-            xy.at(id) = queue.front();
-            cout << "Visited " << queue.front() << " ";
-            queue.pop_front();
-            counter++;
-
-            if (xy[0] == xy[1]) {
+        while (!queuex.empty() || !queuey.empty()) {
+            if (x == y) {
                 return counter;
             }
 
+            if (bit == 'x') {
+                cout << "X" << queuex.front() << "  ";
 
-            for (int vertex : graph[startVertex]) {
-                if (!visited[vertex]) {
-                    visited[vertex] = true;
-                    queue.push_back(vertex);
+                visx[queuex.front()] = true;
+
+                for (int vertex : graph[queuex.front()]) {
+                    if (!visx[vertex]) {
+                        queuex.push_back(vertex);
+                        //visx[vertex] = true;
+                    }
                 }
+                queuex.pop_front();
+                x = queuex.front();
+                bit = 'y';
             }
+            else {
+                cout << "Y" << queuey.front() << "  ";
+
+                visy[queuey.front()] = true;
+
+                for (int vertex : graph[queuey.front()]) {
+                    if (!visy[vertex]) {
+                        queuey.push_back(vertex);
+                        //visy[vertex] = true;
+                    }
+                }
+                queuey.pop_front();
+                y = queuey.front();
+                bit = 'x';
+            }
+        counter++;
         }
+        //X1  Y5  X2  Y4  X3  Y6  X4  Y1  X5  Y2  X6
+        //X1  Y5  X2  Y4  X3  Y6  X4  Y1  X5  Y2  X6  Y3
+        
         return 0;
     }
 
     void setx(int x) {
+        // set start pos of x
         currx = x;
     }
     void sety(int y) {
+        // set start position of y
         curry = y;
+    }
+
+    void display() {
+        for (auto kv : graph) {
+            cout << kv.first << "   ";
+            for (int i : kv.second) {
+                cout << i << " ";
+            }
+            cout << endl;
+        }
     }
 };
 
@@ -92,9 +125,9 @@ int main() {
 
     graph.setx(x);
     graph.sety(y);
-    
-    graph.BFS(x, 0);
-    graph.BFS(y, 1);
 
+    graph.display();
+    
+    graph.BFS(x, y);
     return 0;
 }
