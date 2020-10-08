@@ -7,13 +7,13 @@
 
 using namespace std;
 
-int BFS(pair<char, int> cell, unordered_map<char, vector<char> > visited, unordered_map<char, vector<vector<pair<char, int>>> > corr) {
+int BFS(pair<char, int> cell, unordered_map<char, vector<bool> > visited, unordered_map<char, vector<vector<pair<char, int>>> > corr) {
 
     // Create a queue for BFS
     list<pair<char, int>> queue;
   
     // Mark the current node as visited and enqueue it
-    visited[cell.first][cell.second] = '1';
+    visited[cell.first][cell.second] = true;
     queue.push_back(cell);
   
     while(!queue.empty()) {
@@ -23,6 +23,7 @@ int BFS(pair<char, int> cell, unordered_map<char, vector<char> > visited, unorde
         // Get all adjacent vertices of the dequeued
         // vertex s. If a adjacent has not been visited,
         // then mark it visited and enqueue it
+        cout << corr[cell.first][cell.second].size() << endl;
         for (pair<char, int> i : corr[cell.first][cell.second]) {
             if (visited[i.first][i.second] == '0') {
                 visited[i.first][i.second] = '1';
@@ -143,9 +144,16 @@ int main() {
                 }
                 // if lcell is number bond them
                 else {
-                    corr[r.at(i)][RvarLenCounter].push_back(make_pair(l.at(i), -1));
+                    //typeid(corr[r.at(i)][RvarLenCounter])
+                    corr[r.at(i)][RvarLenCounter].push_back(make_pair(l.at(i), 0));
                 }
-
+                cout << "----------------" << endl;
+                cout << r.at(i) << "  " << corr[r.at(i)][RvarLenCounter].size() << endl;
+                cout << "loop" << endl;
+                for (auto j : corr[r.at(i)][RvarLenCounter]) {
+                    cout << j.first << " " << j.second << endl;
+                }
+                cout << endl;
                 // moving in abstract boundaries of vars
                 if (RvarLenCounter < varLen[r.at(i)]-1) {
                     RvarLenCounter++;
@@ -163,12 +171,12 @@ int main() {
             }
         }
 
-        unordered_map<char, vector<char> > visited;
+        unordered_map<char, vector<bool> > visited;
 
         for (auto kv: varLen) {
-            visited[kv.first] = vector<char>(varLen[kv.first]);
+            visited[kv.first] = vector<bool>(varLen[kv.first]);
             for (int i = kv.second; i > 0; i--) {
-                visited[kv.first][i] = '0';
+                visited[kv.first][i] = false;
             }
         }
 

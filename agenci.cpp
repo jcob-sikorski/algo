@@ -54,10 +54,10 @@ public:
                 visx[queuex.front()] = true;
 
                 for (int vertex : graph[queuex.front()]) {
-                    if (!visx[vertex]) {
+                    //if (!visx[vertex]) {
                         queuex.push_back(vertex);
                         //visx[vertex] = true;
-                    }
+                    //}
                 }
                 queuex.pop_front();
                 x = queuex.front();
@@ -69,20 +69,20 @@ public:
                 visy[queuey.front()] = true;
 
                 for (int vertex : graph[queuey.front()]) {
-                    if (!visy[vertex]) {
+                    //if (!visy[vertex]) {
                         queuey.push_back(vertex);
                         //visy[vertex] = true;
-                    }
+                    //}
                 }
                 queuey.pop_front();
                 y = queuey.front();
                 bit = 'x';
+                counter++;
             }
-        counter++;
         }
         //X1  Y5  X2  Y4  X3  Y6  X4  Y1  X5  Y2  X6
         //X1  Y5  X2  Y4  X3  Y6  X4  Y1  X5  Y2  X6  Y3
-        
+        cout << "                   " << counter << endl;
         return 0;
     }
 
