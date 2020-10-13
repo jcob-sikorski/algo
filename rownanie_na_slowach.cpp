@@ -20,14 +20,14 @@ struct pair_hash
 
 
 int BFS(pair<char, int> cell, 
-        unordered_map<pair<char, int>, bool, pair_hash> visited, 
+        unordered_map<pair<char, int>, vector<bool>, pair_hash> visited, 
         unordered_map<pair<char, int>, vector<pair<char, int>>, pair_hash> corr)   {
 
     // Create a queue for BFS
     list<pair<char, int>> queue;
   
     // Mark the current node as visited and enqueue it
-    visited[cell] = true;
+    visited[cell][cell.second] = true;
     queue.push_back(cell);
   
     while(!queue.empty()) {
@@ -37,11 +37,10 @@ int BFS(pair<char, int> cell,
         // Get all adjacent vertices of the dequeued
         // vertex s. If a adjacent has not been visited,
         // then mark it visited and enqueue it
-
-        for (pair<char, int> i : corr[cell]) {
-            if (visited[i][i.second]) {
-                visited[i][i.second] = true;
-                queue.push_back(i);
+        for (p P : corr[cell]) {
+            if (!visited[P][P.second]) {
+                visited[P][P.second] = true;
+                queue.push_back(P);
             }
         }
     }
@@ -81,6 +80,10 @@ int main() {
             }
         }
     }
+    for (auto s: left) {
+        cout << s;
+    }
+    cout << "   =   ";
 
     // doing the same for right side
     for (int i = 0; i < r.size(); i++) {
@@ -94,18 +97,16 @@ int main() {
             }
         }
     }
-
+    for (auto s: right) {
+        cout << s;
+    }
+    cout << endl;
 
     if (left.size() != right.size()) {
         cout << 0 << endl;
     } 
     else {
         unordered_map<pair<char, int>, vector<pair<char, int>>, pair_hash> corr;
-
-        // initialize vectors by size
-        //for (auto kv : varlen) {
-        //    corr[kv.first] = vector<vector<pair<char, int>>>(kv.second);
-        //}
 
         for (pair<char, int> kv: varlen) {
             for (int i = 0; i < kv.second; i++) {
@@ -115,22 +116,17 @@ int main() {
         // counter to keep track of length of letter
         int LvarLenCounter = 0; int RvarLenCounter = 0;
 
-        //int s = left.size();
-
         // create correlation between same indexes on both sides
         for (int i = 0; i < left.size(); i++) {
             // if lcell is letter then bond it with rcell
             if (isalpha(left.at(i))) {
-                pair<char, int> p;
+
                 // if rcell is letter correlate them
                 if (isalpha(right.at(i))) {
+                    pair<char, int> p;
                     p = make_pair(right.at(i), RvarLenCounter);
+                    corr[make_pair(left.at(i), LvarLenCounter)].push_back(p);
                 }
-                // if rcell is number bond them
-                //else {
-                //    p = make_pair(right.at(i), -1);
-                //}
-                corr[make_pair(left.at(i), LvarLenCounter)].push_back(p);
 
                 // moving in abstract boundaries of vars
                 if (LvarLenCounter < varlen[left.at(i)]-1) {
@@ -152,30 +148,17 @@ int main() {
         LvarLenCounter = 0; RvarLenCounter = 0;
 
 
-
         // for right side correlating by index
         for (int i = 0; i < right.size(); i++) {
             // if rcell is letter then bond it with lcell
             if (isalpha(right.at(i))) {
-                pair<char, int> p;
+                
                 // if lcell is letter bond them
                 if (isalpha(left.at(i))) {
+                    pair<char, int> p;
                     p = make_pair(left.at(i), LvarLenCounter);
+                    corr[make_pair(right.at(i), RvarLenCounter)].push_back(p);
                 }
-                // if lcell is number bond them
-                //else {
-                //    p = make_pair(left.at(i), 0);
-                //}
-                corr[make_pair(right.at(i), RvarLenCounter)].push_back(p);
-
-                //cout << "----------------" << endl;
-                //cout << right.at(i) << "  " << corr[right.at(i)][RvarLenCounter].size() << endl;
-                //cout << "loop" << endl;
-                
-                for (auto j : corr[make_pair(right.at(i), RvarLenCounter)]) {
-                    cout << j.first << " " << j.second << endl;
-                }
-                cout << endl;
                 // moving in abstract boundaries of vars
                 if (RvarLenCounter < varlen[right.at(i)]-1) {
                     RvarLenCounter++;
@@ -192,18 +175,17 @@ int main() {
                 LvarLenCounter = 0;
             }
         }
-        unordered_map<pair<char, int>, bool, pair_hash> visited;
+        unordered_map<pair<char, int>, vector<bool>, pair_hash> visited;
 
-        for (pair<char, int> kv: varlen) {
-            for (int i = 0; i < kv.second; i++) {
-                visited[make_pair(kv.first, i)] = false;
+        for (auto kv: corr) {
+            visited[kv.first] = vector<bool>(kv.second.size());
+            for (int i = 0; i < kv.second.size(); i++) {
+                visited[kv.first][i] = false;
             }
         }
 
-        for (pair<char, int> kv: varlen) {
-            for (int i = 0; i < kv.second; i++) {
-                BFS(make_pair(kv.first, i), visited, corr);
-            }
+        for (auto kv: corr) {
+            BFS(kv.first, visited, corr);
         }
     }
     return 0;
