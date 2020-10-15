@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include <iostream>
 #include <list>
+#include <set>
+#include <algorithm>
 
 using namespace std;
 
@@ -29,62 +31,103 @@ public:
     }
 
 
-    int BFS(int x, int y) {
-        vector<int> visx = vector<int>(N, false);
-        vector<int> visy = vector<int>(N, false);
+    //void BFS_util();
 
-        list<int> queuex;
-        list<int> queuey;
+    //void BFS(int start) {
+    //    // Create a queue for BFS
+    //    list<int> queue;
+    //    queue.push_back(start);
+    //
+    //    while(!queue.empty()) {
+    //        // Dequeue a vertex from queue
+    //        int s = queue.front();
+    //        cout << s << endl;
+    //        queue.pop_front();
+    //
+    //        // Get all adjacent vertices of the dequeued
+    //        // vertex
+    //        for (int v: graph[s]) {
+    //            queue.push_back(v);
+    //        }
+    //    }
+    //}
 
-        queuex.push_back(x);
-        queuey.push_back(y);
 
-        char bit = 'x';
+    //void BFS(int start) {
+    //    // Create a queue for BFS
+    //    list<int> queue;
+    //    queue.push_back(start);
+    //
+    //    while(!queue.empty()) {
+    //        // Dequeue a vertex from queue
+    //        int s = queue.front();
+    //        //cout << s << endl;
+    //        queue.pop_front();
+    //
+    //        // Get all adjacent vertices of the dequeued
+    //        // vertex
+    //        cout << s << ": ";
+    //        for (int v: graph[s]) {
+    //            cout << v << " ";
+    //            queue.push_back(v);
+    //        }
+    //        cout << endl;
+    //    }
+    //}
 
-        int counter = 0;
 
-        while (!queuex.empty() || !queuey.empty()) {
-            if (x == y) {
-                return counter;
-            }
+    void BFS(int start) {
+        // Create a queue for BFS
+        list<int> queue;
+        queue.push_back(start);
+        int state = 0;
 
-            if (bit == 'x') {
-                cout << "X" << queuex.front() << "  ";
+        set<int> x_neigh;
+        set<int> y_neigh;
+        while (!qx.empty() && !qy.empty() && qx.front() != qy.front()) {
+            if (state) {
+                // Dequeue a vertex from queue
+                int s = qx.front();
+                qx.pop_front();
 
-                visx[queuex.front()] = true;
+                // Get all adjacent vertices of the dequeued
+                // vertex
+                cout << s << ": ";
+                
+                for (int v: graph[s]) {
+                    cout << v << " ";
+                    qx.push_back(v);
 
-                for (int vertex : graph[queuex.front()]) {
-                    //if (!visx[vertex]) {
-                        queuex.push_back(vertex);
-                        //visx[vertex] = true;
-                    //}
+                    x_neigh.insert(v);
                 }
-                queuex.pop_front();
-                x = queuex.front();
-                bit = 'y';
+                cout << endl;
+                state = 1;
             }
             else {
-                cout << "Y" << queuey.front() << "  ";
+                // Dequeue a vertex from queue
+                int s = qy.front();
+                qy.pop_front();
 
-                visy[queuey.front()] = true;
+                // Get all adjacent vertices of the dequeued
+                // vertex
 
-                for (int vertex : graph[queuey.front()]) {
-                    //if (!visy[vertex]) {
-                        queuey.push_back(vertex);
-                        //visy[vertex] = true;
-                    //}
+                cout << s << ": ";
+                for (int v: graph[s]) {
+                    cout << v << " ";
+                    qy.push_back(v);
+
+                    y_neigh.insert(v);
                 }
-                queuey.pop_front();
-                y = queuey.front();
-                bit = 'x';
-                counter++;
+                cout << endl;
+
+                // https://stackoverflow.com/questions/29419922/fastest-way-to-find-out-if-two-sets-overlap
+                if (set_intersection(x_neigh.begin(),x_neigh.end(),y_neigh.begin(),y_neigh.end());
+                //, std::inserter(,intersect.begin()));
+                state = 0;
             }
         }
-        //X1  Y5  X2  Y4  X3  Y6  X4  Y1  X5  Y2  X6
-        //X1  Y5  X2  Y4  X3  Y6  X4  Y1  X5  Y2  X6  Y3
-        cout << "                   " << counter << endl;
-        return 0;
     }
+
 
     void setx(int x) {
         // set start pos of x
@@ -128,6 +171,7 @@ int main() {
 
     graph.display();
     
-    graph.BFS(x, y);
+    graph.BFS(4);
+    //graph.BFS(x, y);
     return 0;
 }
