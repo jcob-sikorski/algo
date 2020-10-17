@@ -14,12 +14,6 @@ class Graph {
 private:
     int N;
     unordered_map<int, vector<int>> graph;
-    int currx;
-    int curry;
-
-    vector<int> xy{currx, curry};
-
-    int counter = 0;
 
 public:
 
@@ -57,7 +51,7 @@ public:
                 // Get all adjacent vertices of the dequeued
                 // vertex
                 cout << s << ": ";
-                
+
 
                 for (int v: graph[s]) {
                     pair<int, int> new_path = make_pair(path.first+1, v);
@@ -112,16 +106,6 @@ public:
         return counter;
     }
 
-
-    void setx(int x) {
-        // set start pos of x
-        currx = x;
-    }
-    void sety(int y) {
-        // set start position of y
-        curry = y;
-    }
-
     void display() {
         for (auto kv : graph) {
             cout << kv.first << "   ";
@@ -149,9 +133,6 @@ int main() {
     for (int i = 0; i < m; i++) {
         graph.corr(x_y.at(i));
     }
-
-    graph.setx(x);
-    graph.sety(y);
 
     graph.display();
     
