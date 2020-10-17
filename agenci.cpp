@@ -4,6 +4,7 @@
 #include <list>
 #include <set>
 #include <algorithm>
+#include <deque>
 
 using namespace std;
 
@@ -31,101 +32,84 @@ public:
     }
 
 
-    //void BFS_util();
 
-    //void BFS(int start) {
-    //    // Create a queue for BFS
-    //    list<int> queue;
-    //    queue.push_back(start);
-    //
-    //    while(!queue.empty()) {
-    //        // Dequeue a vertex from queue
-    //        int s = queue.front();
-    //        cout << s << endl;
-    //        queue.pop_front();
-    //
-    //        // Get all adjacent vertices of the dequeued
-    //        // vertex
-    //        for (int v: graph[s]) {
-    //            queue.push_back(v);
-    //        }
-    //    }
-    //}
-
-
-    //void BFS(int start) {
-    //    // Create a queue for BFS
-    //    list<int> queue;
-    //    queue.push_back(start);
-    //
-    //    while(!queue.empty()) {
-    //        // Dequeue a vertex from queue
-    //        int s = queue.front();
-    //        //cout << s << endl;
-    //        queue.pop_front();
-    //
-    //        // Get all adjacent vertices of the dequeued
-    //        // vertex
-    //        cout << s << ": ";
-    //        for (int v: graph[s]) {
-    //            cout << v << " ";
-    //            queue.push_back(v);
-    //        }
-    //        cout << endl;
-    //    }
-    //}
-
-
-    void BFS(int start) {
+    int BFS(int startx, int starty) {
         // Create a queue for BFS
-        list<int> queue;
-        queue.push_back(start);
-        int state = 0;
+        deque<pair<int, int>> qx;
+        qx.push_back(make_pair(0, startx));
+        deque<pair<int, int>> qy;
+        qy.push_back(make_pair(0, starty));
 
-        set<int> x_neigh;
-        set<int> y_neigh;
-        while (!qx.empty() && !qy.empty() && qx.front() != qy.front()) {
+        int counter;
+
+        int state = 1;
+
+        list<pair<int, int>> paths_x;
+        list<pair<int, int>> paths_y;
+
+        while (!qx.empty()) {
             if (state) {
+                pair<int, int> path = qx.front();
                 // Dequeue a vertex from queue
-                int s = qx.front();
+                int s = path.second;
                 qx.pop_front();
 
                 // Get all adjacent vertices of the dequeued
                 // vertex
                 cout << s << ": ";
                 
-                for (int v: graph[s]) {
-                    cout << v << " ";
-                    qx.push_back(v);
 
-                    x_neigh.insert(v);
+                for (int v: graph[s]) {
+                    pair<int, int> new_path = make_pair(path.first+1, v);
+                    cout << v << " ";
+                    qx.push_back(new_path);
+
+                    paths_x.push_back(new_path);
                 }
                 cout << endl;
-                state = 1;
+                state = 0;
             }
             else {
+                pair<int, int> path = qy.front();
                 // Dequeue a vertex from queue
-                int s = qy.front();
+                int s = path.second;
                 qy.pop_front();
 
                 // Get all adjacent vertices of the dequeued
                 // vertex
+                cout << "             " << s << ": ";
 
-                cout << s << ": ";
+
                 for (int v: graph[s]) {
+                    pair<int, int> new_path = make_pair(path.first+1, v);
                     cout << v << " ";
-                    qy.push_back(v);
+                    qy.push_back(new_path);
 
-                    y_neigh.insert(v);
+                    paths_y.push_back(new_path);
                 }
                 cout << endl;
 
-                // https://stackoverflow.com/questions/29419922/fastest-way-to-find-out-if-two-sets-overlap
-                if (set_intersection(x_neigh.begin(),x_neigh.end(),y_neigh.begin(),y_neigh.end());
-                //, std::inserter(,intersect.begin()));
-                state = 0;
+                if (!qx.empty() && !qy.empty()) {
+                    list<pair<int, int>> intersection;
+
+                    set_intersection(
+                        paths_x.begin(), paths_x.end(),
+                        paths_y.begin(), paths_y.end(), back_inserter(intersection)
+                        );
+
+                    if (!intersection.empty()) {
+                        for (auto i : intersection) {
+                            counter = i.first;
+                            goto end;
+                        }
+                    }
+                }
+                state = 1;
             }
         }
+
+        end:
+        return counter;
     }
 
 
@@ -171,7 +155,6 @@ int main() {
 
     graph.display();
     
-    graph.BFS(4);
-    //graph.BFS(x, y);
+    cout << graph.BFS(x, y) << endl;
     return 0;
 }
