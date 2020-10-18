@@ -43,7 +43,9 @@
         "fstream": "cpp",
         "sstream": "cpp",
         "stdexcept": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp"
     },
     "files.exclude": {
         "*.exe": true

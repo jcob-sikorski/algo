@@ -2,9 +2,9 @@
 #include <unordered_map>
 #include <iostream>
 #include <list>
-#include <set>
 #include <algorithm>
 #include <deque>
+#include <sstream>
 
 using namespace std;
 
@@ -26,11 +26,12 @@ public:
     }
 
 
+    void BFS(int startx, int starty) {
 
-    int BFS(int startx, int starty) {
         // Create a queue for BFS
         deque<pair<int, int>> qx;
         qx.push_back(make_pair(0, startx));
+
         deque<pair<int, int>> qy;
         qy.push_back(make_pair(0, starty));
 
@@ -50,12 +51,12 @@ public:
 
                 // Get all adjacent vertices of the dequeued
                 // vertex
-                cout << s << ": ";
+                // cout << s << ": ";
 
 
                 for (int v: graph[s]) {
                     pair<int, int> new_path = make_pair(path.first+1, v);
-                    cout << v << " ";
+                    // cout << v << " ";
                     qx.push_back(new_path);
 
                     paths_x.push_back(new_path);
@@ -71,17 +72,17 @@ public:
 
                 // Get all adjacent vertices of the dequeued
                 // vertex
-                cout << "             " << s << ": ";
+                // cout << "             " << s << ": ";
 
 
                 for (int v: graph[s]) {
                     pair<int, int> new_path = make_pair(path.first+1, v);
-                    cout << v << " ";
+                    // cout << v << " ";
                     qy.push_back(new_path);
 
                     paths_y.push_back(new_path);
                 }
-                cout << endl;
+                // cout << endl;
 
                 if (!qx.empty() && !qy.empty()) {
                     list<pair<int, int>> intersection;
@@ -98,44 +99,55 @@ public:
                         }
                     }
                 }
+                else {
+                    cout << "NIE" << endl;
+                }
                 state = 1;
             }
         }
 
         end:
-        return counter;
+        cout << counter << endl;
     }
 
-    void display() {
-        for (auto kv : graph) {
-            cout << kv.first << "   ";
-            for (int i : kv.second) {
-                cout << i << " ";
-            }
-            cout << endl;
-        }
-    }
+    // void display() {
+        // for (auto kv : graph) {
+            // cout << kv.first << "   ";
+            // for (int i : kv.second) {
+                // cout << i << " ";
+            // }
+            // cout << endl;
+        // }
+    // }
 };
 
 
 int main() {
-    int n = 6;
-    int m = 7;
-    
-    int x = 1;
-    int y = 5;
 
-    vector<pair<int, int>> x_y{make_pair(1,2),make_pair(4,5),make_pair(2,3),
-        make_pair(3,4),make_pair(4,1),make_pair(5,4),make_pair(5,6)};
-    
+    //ios_base::sync_with_stdio(false);
+    //cin.tie(0);
+
+    int n, m;
+    int x, y;
+
+    cin >> n >> m;
+    cin >> x >> y;
+
     Graph graph;
 
-    for (int i = 0; i < m; i++) {
-        graph.corr(x_y.at(i));
-    }
+    // for two lines
+	for(int i = 0; i < m; ++i) {
+        string str;
 
-    graph.display();
-    
-    cout << graph.BFS(x, y) << endl;
+		if(getline(cin, str)) {
+			istringstream sstr(str);
+			int a, b;
+
+			while(sstr >> a >> b) {
+                graph.corr(make_pair(a, b));
+			}
+		}
+  	}
+    graph.BFS(x, y);
     return 0;
 }
