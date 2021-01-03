@@ -1,0 +1,1 @@
+Repository where I implement solutions to competitive programming exercises and build algorithms.
