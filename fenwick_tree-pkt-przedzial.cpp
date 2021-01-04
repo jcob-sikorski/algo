@@ -20,7 +20,7 @@ vector<int> createTree(vector<int> arr) {
         int j = i + lsb(i);
         // if parent index isn't out of bounds of tree
         if (j <= tree.size()) {
-            // add value of its child
+            // add value of its  child
             tree[j] += tree[i];
         }
     }
