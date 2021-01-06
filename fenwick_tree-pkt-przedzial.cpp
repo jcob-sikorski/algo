@@ -28,16 +28,17 @@ vector<int> createTree(vector<int> arr) {
     return tree;
 }
 
+/*
+void update(int val, int index, vector<int> &tree) {
+    tree[index] += val;
 
-// void update(int val, int index, vector<int> &tree) {
-//     tree[index] += val;
+    while (index < tree.size()) {
+        index += lsb(index);
 
-//     while (index < tree.size()) {
-//         index += lsb(index);
-
-//         tree[index] += val;
-//     }
-// }
+        tree[index] += val;
+    }
+}
+*/
 
 int rangeSum(int a, int b, vector<int> &tree) {
     if (a > b) {
@@ -47,13 +48,13 @@ int rangeSum(int a, int b, vector<int> &tree) {
     int beforeeqA = 0;
 
     int toB = 0;
-    a += 1;
+    // a += 1;
     while (a != 0) {
         beforeeqA += tree[a];
 
         a -= lsb(a);
     }
-
+    b += 1;
     while (b != 0) {
         toB += tree[b];
 
@@ -63,7 +64,7 @@ int rangeSum(int a, int b, vector<int> &tree) {
 }
 
 int main() {
-    vector<int> arr = {5, 4, 2, 1, 6, 3};
+    vector<int> arr = {1, 1, 1, 1, 1, 1, 1, 1};
 
     vector<int> tree = createTree(arr);
 

@@ -16,6 +16,7 @@ int query(int i, int base, vector<int> &tree) {
 
         // jump to parent
         i /= 2;
+        // index -= index & (-index); 
     }
     return var;
 }
