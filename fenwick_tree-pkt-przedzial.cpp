@@ -9,7 +9,7 @@ int lsb(int i) {
 }
 
 
-vector<int> createTree(vector<int> arr) {
+vector<int> createTree(const vector<int> &arr) {
     // create 1 based tree
     vector<int> tree{0};
     tree.insert(tree.end(), arr.begin(), arr.end());
@@ -40,7 +40,7 @@ void update(int val, int index, vector<int> &tree) {
 }
 */
 
-int rangeSum(int a, int b, vector<int> &tree) {
+int rangeSum(int a, int b, const vector<int> &tree) {
     if (a > b) {
         swap(a, b);
     }

@@ -72,7 +72,7 @@ int main() {
 
     for (int i = 1; i <= n; i++) {
 
-        update(i, 7, 1, base, tree);
+        update(i, i+1, 1, base, tree);
 
         for (int j = 0; j < tree.size(); j++) {
             cout << " {" << j << "} >> " << tree[j] << "  ";
