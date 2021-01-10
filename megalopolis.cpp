@@ -69,10 +69,6 @@ void set_height(node *Node, vector<node*> &ptr) {
     }
 }
 
-// vector<int> out = {
-
-// };
-
 
 int main() {
     int n;

@@ -34,15 +34,24 @@ vector<int> createTree(const vector<int> &arr) {
     return tree;
 }
 
+// lets you update range of elements by 1 element in a tree in log n time
+void update(int index, int value, vector<int> &tree) {
+    while (index != 0) {
+        tree[index] += value;
+
+        index -= lsb(index);
+    }
+}
+
 // lets you check value of 1 element in a tree in log n time
-int query(int x, const vector<int> &tree) {
+int query(int index, const vector<int> &tree) {
     int beforeeq = 0;
 
 
-    while (x != 0) {
-        beforeeq += tree[x];
+    while (index != 0) {
+        beforeeq += tree[index];
 
-        x -= lsb(x);
+        index -= lsb(index);
     }
     return beforeeq;
 }
