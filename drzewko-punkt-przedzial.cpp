@@ -2,38 +2,37 @@
 
 using namespace std;
 
-// update na przedziale x-y
-void update(int x, int y, int val, int base, vector<int> &tree) {
-    x += base-1;
-    y += base+1;
+// update pojedynczej komórki
+void update(int index, int val, int base, vector<int> &tree) {
+    index += base;
+    tree[index] = val;
+    index >>= 1;
 
-    int suma = 0;
-
-    while (y-x > 1) {
-        if (!(x&1)) {
-            // DEBUG
-            tree[x+1] += val;
-            suma = tree[x+1];
-        }
-
-        if (y&1) {
-            tree[y-1] += val;
-            suma = tree[y-1];
-        }
-
-        x >>= 1; y >>=1;
+    while (index) {
+        // DEBUG
+        int sum  = tree[index*2] + tree[index*2+1];
+        tree[index] = sum;
+        index >>= 1;
     }
 }
 
-// zapytanie o sumę od pojedynczej komórki w górę
-int query(int index, int base, const vector<int> &tree) {
+// zapytanie o przedział x-y
+int query(int x, int y, int base, const vector<int> &tree) {
     int res = 0;
 
-    index += base;
+    x += base-1;
+    y += base+1;
 
-    while (index) {
-        res += tree[index];
-        index >>= 1;
+    while (y-x > 1) {
+        if (!(x&1)) {
+            res += tree[x+1];
+        }
+
+        if (y&1) {
+            res += tree[y-1];
+        }
+
+        x >>= 1; y >>= 1;
     }
     return res;
 }
@@ -96,13 +95,13 @@ int main() {
 
     display(base, arr, tree);
 
-    query(4, base, tree);
+    query(-1, 5, base, tree);
 
-    update(1, 4, 3, base, tree);
+    update(2, -3, base, tree);
 
     display(base, arr, tree);
 
-    query(4, base, tree);
+    query(0, 4, base, tree);
 
     cout << endl;
 }
