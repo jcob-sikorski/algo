@@ -9,14 +9,17 @@ struct node {
 
 
 // zapytanie o przedział x-y
-void query(int x, int y, 
+int query(int x, int y, 
         const int &base, 
         set<int> &places, 
-        const unordered_map<int, vector<int>> &lookup, 
+        unordered_map<int, vector<int>> &lookup, 
         const vector<node> &tree) 
         {
 
     int ref = INT32_MAX; // wartość minimum której szukamy
+
+    int origx = x;
+    int origy = y;
 
     x += base-1; // prawy wskaźnik
     y += base+1; // lewy wskaźnik
@@ -41,11 +44,7 @@ void query(int x, int y,
         x >>= 1; y >>= 1; // dzielimy przez dwa (skaczemy do ojców)
     }
 
-    if (ref != INT32_MAX) { // jeśli funkcja spełniła swoje zamierzone zadanie
-        for (int to_delete: lookup[ref]) {
-            places.erase(to_delete);
-        }
-    }
+    return ref;
 }
 
 // konstruujemy drzewo w czasie O(n)
@@ -86,48 +85,63 @@ void construct(int base,
 // funkcja pomocnicza
 void pla(const int base, 
         set<int> &places, 
-        const unordered_map<int, vector<int>> &lookup, 
+        unordered_map<int, vector<int>> &lookup, 
         const vector<node> &tree, 
         int &wynik) 
         {
 
+    queue<int> to_delete;
+
+    int first_min = query(0, *places.rbegin(), base, places, lookup, tree);
+    wynik++;
+
+    for (int i : lookup[first_min]) {
+        places.erase(i);
+    }
+
     while (!places.empty()) {
+
         int x = *places.begin(); // zaczynamy szukać zbioru indeksów na których wywołamy funkcję query
         int maxr = x;   // prawy kraniec zbioru indeksów
 
-        for (int i : places) {
-            if (i - maxr > 1) { // jeśli kolejny index nie należy już do zbioru
-                query(x, maxr, base, places, lookup, tree);
+        set<int>::iterator it = places.begin();
+
+        // for (int i : places) {
+        while (it != places.end()) {
+            if (*it - maxr > 1) { // jeśli kolejny index nie należy już do zbioru
+            
+                // musimy dodać wszystkie przedziały policzyć ich ilość i wykonać operację na nich
+                int ref = query(x, maxr, base, places, lookup, tree);
+                if (ref != INT32_MAX) {
+                    to_delete.push(ref);
+                }
                 wynik++;    // każde wywołanie funckji query to jeden plakat
-                break;  //zaczynamy od nowa bo zbiór indeksów do zrobienia został zmodyfikowany przez funkcję query
+                x = *it;
             }
-            maxr = i;
+            maxr = *it;
+            it++;
+        }
+
+        // wywołujemy operację query na włączając ostatni element w zbiorze
+        int ref = query(x, maxr, base, places, lookup, tree);
+        if (ref != INT32_MAX && to_delete.front() != ref) {
+            to_delete.push(ref);
+        }
+        wynik++;
+
+
+        while (!to_delete.empty()) {
+            for (int i : lookup[to_delete.front()]) {
+                places.erase(i);
+            }
+            to_delete.pop();
         }
     }
 }
-
-
-
-
-void display(int base, const vector<int> &arr, const vector<node> &tree) {
-    int end = base + arr.size();
-
-    while (base) {
-
-        for (int i = base; i <= end; i++) {
-            cout << tree[i].val << " ";
-        }
-        base >>= 1; end >>= 1;
-
-        cout << endl;
-    }
-}
-
-
 
 
 int main() {
-    vector<int> arr = {2, 2, 3, 4, 2, 4, 3, 2};
+    vector<int> arr = {3, 4, 2, 4, 3, 2};
 
     int base = 1;
 
