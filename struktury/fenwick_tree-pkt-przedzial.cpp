@@ -28,7 +28,7 @@ vector<int> createTree(const vector<int> &arr) {
     return tree;
 }
 
-/*
+
 void update(int val, int index, vector<int> &tree) {
     tree[index] += val;
 
@@ -38,7 +38,7 @@ void update(int val, int index, vector<int> &tree) {
         tree[index] += val;
     }
 }
-*/
+
 
 int rangeSum(int a, int b, const vector<int> &tree) {
     if (a > b) {
@@ -48,13 +48,14 @@ int rangeSum(int a, int b, const vector<int> &tree) {
     int beforeeqA = 0;
 
     int toB = 0;
-    // a += 1;
+
+    a -= 1;
     while (a != 0) {
         beforeeqA += tree[a];
 
         a -= lsb(a);
     }
-    b += 1;
+
     while (b != 0) {
         toB += tree[b];
 
