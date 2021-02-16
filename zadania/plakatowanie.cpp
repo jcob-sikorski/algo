@@ -141,11 +141,22 @@ void pla(const int base,
 
 
 int main() {
-    vector<int> arr = {3, 4, 2, 4, 3, 2};
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+
+    int n, d, w;
+
+    cin >> n;
+    vector<int> arr; arr.reserve(n);
+
+    for (int i = 0; i < n; i++) {
+        cin >> d >> w;
+        arr.push_back(w);
+    }
 
     int base = 1;
 
-    while (base < arr.size()) {
+    while (base < n) {
         base <<= 1;
     }
 
@@ -157,7 +168,7 @@ int main() {
 
     set<int> places;    // zbiór indeksów
 
-    for (int i = 0; i < arr.size(); i++) { // dodajemy indexy do ich zbioru
+    for (int i = 0; i < n; i++) { // dodajemy indexy do ich zbioru
         places.insert(i);
     }
 
@@ -170,5 +181,4 @@ int main() {
     pla(base, places, lookup, tree, wynik);
 
     cout << wynik << endl;
-    cout << endl;
 }
