@@ -20,7 +20,7 @@ int aftereq(int x, vector<int> &arr) {
             index = m;
         }
 
-        // If x greater, ignore left half 
+        // If x greater-equal, ignore left half before middle
         if (arr[m] <= x) 
             l = m + 1; 
   
@@ -34,7 +34,8 @@ int aftereq(int x, vector<int> &arr) {
 
 
 int main() {
-    vector<int> arr = {1, 3, 5, 6, 9, 11, 15, 19};
+    vector<int> arr = {0, 4, 6, 9, 11, 13, 19, 21, 44, 86};
 
-    aftereq(13, arr);
+    int wynik = aftereq(43, arr);
+    return 0;
 }
