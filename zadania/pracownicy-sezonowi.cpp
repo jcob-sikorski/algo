@@ -9,7 +9,7 @@ long double pra(int n, long double k, long double lo, long double hi, vector<lon
         mid = lo + (hi-lo)/2;
 
         unsigned long long int pracownicy = 0;
-         for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             pracownicy += ceil(v[i]/mid);
         }
 

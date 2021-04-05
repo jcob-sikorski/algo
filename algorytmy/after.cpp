@@ -4,17 +4,17 @@ using namespace std;
 
 
 // szukamy indeksu najbliższej wartości >= x
-int aftereq(int &x, vector<int> &arr) {
+int after(int &x, vector<int> &arr) {
 	int l = 0, mid, r = arr.size();
 
 	while(l < r) {
 		mid = (l + r) / 2;
 		if(arr[mid] <= x)
-			l = c + 1;
+			l = mid + 1;
 		else
-			r = c;
+			r = mid;
 	}
-	if(l == (int)ind[b].size())
+	if(l == arr.size())
 		return -1;
 	else
 		return arr[l];

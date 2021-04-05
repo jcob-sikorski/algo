@@ -7,14 +7,17 @@ int cnt(long long s, vector<long long> &y, vector<long long> &x) {
 
     int n = x.size();
 
-    int j = -1;
-    for (int i = n-1; i >= 0; i--) {
-        while (j < n-1 && x[j+1]*y[i] < s) {
+    int bound = 0;
+    for (int i = y.size()-1; i >= 0; i--) {
+        int j = bound;
+        while (j < n && x[j]*y[i] < s) {
             j++;
         }
-        res += n - j;
+        res += j;
+        bound = j;
+        j = 0;
     }
-    return res;
+    return n*n - res;
 }
 
 
@@ -25,12 +28,16 @@ int bin(long long K, vector<long long> &y, vector<long long> &x) {
     k = x[x.size()-1]*y[y.size()-1];
 
     while (p < k) {
-        s = p + (k-p)/2;
+        // proste, szybkie i skuteczne - bez overflow
+        // jeśli suma liczb jest nieparzysta to wynik zaokrąglamy w górę
+        s = ((p+k) % 2) ? (p+k) / 2 + 1 : (p+k) / 2;
 
-        if (cnt(s, y, x) < K) k = s-1;
-        else p = s;
+        if (cnt(s, y, x) < K)
+            k = s-1;
+        else
+            p = s;
     }
-    return s;
+    return p + (k-p)/2;
 }
 
 
@@ -68,12 +75,13 @@ int main() {
     y.push_back(b-prev);
     sort(y.begin(), y.end());
 
-    for (int i = 0; i <= n; i++) {
-        for (int j = 0; j <= n; j++) {
-            cout << y[i]*x[j] << " ";
-        } cout << endl;
-    }
+    // cout << endl;
+    // for (int i = 0; i <= n; i++) {
+    //     for (int j = 0; j <= n; j++) {
+    //         cout << y[i]*x[j] << " ";
+    //     } cout << endl;
+    // }
 
-    cout << bin(K, y, x);
+    cout << bin(K, y, x) << endl;
     return 0;
 }
