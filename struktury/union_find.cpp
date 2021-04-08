@@ -1,105 +1,132 @@
+// A union by rank and path compression based program to
+// detect cycle in a graph
 #include <bits/stdc++.h>
 
-using namespace std;
-
-
-class UnionFind {
-
-private:
-
-    // The number of elements in this union find
-    int size;
-
-    // Used to track the size of each of the component
-    vector<int> sz;
-
-    // id[i] points to the parent of i, if id[i] = i then i is a root node
-    vector<int> id;
-
-    // Tracks the number of components in the union find
-    int numComponents;
-
-public:
-
-    // init
-    void unionFind(int size) {
-
-        this->size = numComponents = size;
-
-        sz.resize(size);
-        id.resize(size);
-
-        for (int i = 0; i < size; i++) {
-            id[i] = i; // Link to itself (self root)
-            sz[i] = 1; // Each component is originally of size one
-        }
-    }
-
-    // Find which component/set 'p' belongs to, takes amortized constant time.
-    int find(int p) {
-
-        // Find the root of the component/set
-        int root = p;
-
-        while (root != id[root]) {
-            root = id[root];
-        }
-
-        // Compress the path leading back to the root.
-        // Doing this operation is called "path compression"
-        // and is what gives us amortized time complexity.
-        while (p != root) {
-            int next = id[p];
-            id[p] = root;
-            p = next;
-        }
-        return root;
-    }
-
-    // Unify the components/sets containing elements 'p' and 'q'
-    void unify(int p, int q) {
-
-        int root1 = find(p);
-        int root2 = find(q);
-
-        // These elements are already in the same group!
-        if (root1 == root2) {
-            return;
-        }
-
-        // Merge smaller component/set into the larger one.
-        if (sz[root1] < sz[root2]) {
-            sz[root2] += sz[root1];
-            id[root1] = root2;
-        } else {
-            sz[root1] += sz[root2];
-            id[root2] = root1;
-        }
-
-        // Since the roots found are different we know that the
-        // number of components/sets has decreased by one
-        numComponents--;
-    }
-
-
-      // Return whether or not the elements 'p' and
-      // 'q' are in the same components/set.
-    bool connected(int p, int q) {
-      return find(p) == find(q);
-    }
-
-    // Return the size of the components/set 'p' belongs to
-    int componentSize(int p) {
-        return sz[find(p)];
-    }
-
-    // Return the number of elements in this UnionFind/Disjoint set
-    int elements() {
-        return size;
-    }
-
-    // Returns the number of remaining components/sets
-    int components() {
-        return numComponents;
-    }
+// a structure to represent an edge in the graph
+struct Edge {
+	int src, dest;
 };
+
+// a structure to represent a graph
+struct Graph {
+	// V-> Number of vertices, E-> Number of edges
+	int V, E;
+
+	// graph is represented as an array of edges
+	struct Edge* edge;
+};
+
+struct subset {
+	int parent;
+	int rank;
+};
+
+// Creates a graph with V vertices and E edges
+struct Graph* createGraph(int V, int E)
+{
+	struct Graph* graph
+		= (struct Graph*)malloc(sizeof(struct Graph));
+	graph->V = V;
+	graph->E = E;
+
+	graph->edge = (struct Edge*)malloc(
+		graph->E * sizeof(struct Edge));
+
+	return graph;
+}
+
+// A utility function to find set of an element i
+// (uses path compression technique)
+int find(struct subset subsets[], int i)
+{
+	// find root and make root as parent of i (path
+	// compression)
+	if (subsets[i].parent != i)
+		subsets[i].parent
+			= find(subsets, subsets[i].parent);
+
+	return subsets[i].parent;
+}
+
+// A function that does union of two sets of x and y
+// (uses union by rank)
+void Union(struct subset subsets[], int xroot, int yroot)
+{
+
+	// Attach smaller rank tree under root of high rank tree
+	// (Union by Rank)
+	if (subsets[xroot].rank < subsets[yroot].rank)
+		subsets[xroot].parent = yroot;
+	else if (subsets[xroot].rank > subsets[yroot].rank)
+		subsets[yroot].parent = xroot;
+
+	// If ranks are same, then make one as root and
+	// increment its rank by one
+	else {
+		subsets[yroot].parent = xroot;
+		subsets[xroot].rank++;
+	}
+}
+
+// The main function to check whether a given graph contains
+// cycle or not
+int isCycle(struct Graph* graph)
+{
+	int V = graph->V;
+	int E = graph->E;
+
+	// Allocate memory for creating V sets
+	struct subset* subsets
+		= (struct subset*)malloc(V * sizeof(struct subset));
+
+	for (int v = 0; v < V; ++v) {
+		subsets[v].parent = v;
+		subsets[v].rank = 0;
+	}
+
+	// Iterate through all edges of graph, find sets of both
+	// vertices of every edge, if sets are same, then there
+	// is cycle in graph.
+	for (int e = 0; e < E; ++e) {
+		int x = find(subsets, graph->edge[e].src);
+		int y = find(subsets, graph->edge[e].dest);
+
+		if (x == y)
+			return 1;
+
+		Union(subsets, x, y);
+	}
+	return 0;
+}
+
+// Driver code
+int main()
+{
+	/* Let us create the following graph
+		0
+		|  \
+		|   \
+		1-----2 */
+
+	int V = 3, E = 3;
+	struct Graph* graph = createGraph(V, E);
+
+	// add edge 0-1
+	graph->edge[0].src = 0;
+	graph->edge[0].dest = 1;
+
+	// add edge 1-2
+	graph->edge[1].src = 1;
+	graph->edge[1].dest = 2;
+
+	// add edge 0-2
+	graph->edge[2].src = 0;
+	graph->edge[2].dest = 2;
+
+	if (isCycle(graph))
+		printf("Graph contains cycle");
+	else
+		printf("Graph doesn't contain cycle");
+
+	return 0;
+}
