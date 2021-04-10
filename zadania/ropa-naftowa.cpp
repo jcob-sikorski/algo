@@ -44,7 +44,7 @@ int main()
             }
             else {
                 hi = mid;
-            }
+            }   
         }
         x += mid;
         total += (cv[i].first/cv[i].second)*mid;

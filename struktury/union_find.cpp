@@ -1,132 +1,96 @@
-// A union by rank and path compression based program to
-// detect cycle in a graph
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 
-// a structure to represent an edge in the graph
-struct Edge {
-	int src, dest;
+using namespace std;
+
+
+class UnionFind
+{
+
+private:
+    // stores where object belongs
+    vector<int> bijection;
+
+    // stores key for every object
+    unordered_map<char, int> mapper;
+
+public:
+    void map_obj(char &obj)
+    {
+        mapper[obj] = bijection.size();
+        bijection.push_back(mapper[obj]);
+    }
+    int obj_key(char &obj)
+    {
+        if (mapper.find(obj) == mapper.end()) {
+            return -1;
+        }
+        else {
+            return mapper[obj];
+        }
+    }
+    int whr_belongs(char &obj)
+    {
+        int key = obj_key(obj);
+
+        if (key != -1) {
+            return bijection[key];
+        }
+        else {
+            return -1;
+        }
+    }
+    void union_obj(char a, char b)
+    {
+        int a_group = whr_belongs(a);
+
+        if (a_group == -1) {
+            map_obj(a);
+        }
+
+        int b_group = whr_belongs(b);
+
+        if (b_group == -1) {
+            map_obj(b);
+        }
+
+        if (a_group > b_group) {
+            bijection[obj_key(b)] = a_group;
+        }
+        else {
+            bijection[obj_key(a)] = b_group;
+        }
+    }
+
+    UnionFind(vector<char> &a)
+    {
+        for (char i : a) {
+            int group = whr_belongs(i);
+
+            if (group == -1) {
+                map_obj(i);
+            }
+        }
+    }
 };
 
-// a structure to represent a graph
-struct Graph {
-	// V-> Number of vertices, E-> Number of edges
-	int V, E;
 
-	// graph is represented as an array of edges
-	struct Edge* edge;
-};
-
-struct subset {
-	int parent;
-	int rank;
-};
-
-// Creates a graph with V vertices and E edges
-struct Graph* createGraph(int V, int E)
-{
-	struct Graph* graph
-		= (struct Graph*)malloc(sizeof(struct Graph));
-	graph->V = V;
-	graph->E = E;
-
-	graph->edge = (struct Edge*)malloc(
-		graph->E * sizeof(struct Edge));
-
-	return graph;
-}
-
-// A utility function to find set of an element i
-// (uses path compression technique)
-int find(struct subset subsets[], int i)
-{
-	// find root and make root as parent of i (path
-	// compression)
-	if (subsets[i].parent != i)
-		subsets[i].parent
-			= find(subsets, subsets[i].parent);
-
-	return subsets[i].parent;
-}
-
-// A function that does union of two sets of x and y
-// (uses union by rank)
-void Union(struct subset subsets[], int xroot, int yroot)
-{
-
-	// Attach smaller rank tree under root of high rank tree
-	// (Union by Rank)
-	if (subsets[xroot].rank < subsets[yroot].rank)
-		subsets[xroot].parent = yroot;
-	else if (subsets[xroot].rank > subsets[yroot].rank)
-		subsets[yroot].parent = xroot;
-
-	// If ranks are same, then make one as root and
-	// increment its rank by one
-	else {
-		subsets[yroot].parent = xroot;
-		subsets[xroot].rank++;
-	}
-}
-
-// The main function to check whether a given graph contains
-// cycle or not
-int isCycle(struct Graph* graph)
-{
-	int V = graph->V;
-	int E = graph->E;
-
-	// Allocate memory for creating V sets
-	struct subset* subsets
-		= (struct subset*)malloc(V * sizeof(struct subset));
-
-	for (int v = 0; v < V; ++v) {
-		subsets[v].parent = v;
-		subsets[v].rank = 0;
-	}
-
-	// Iterate through all edges of graph, find sets of both
-	// vertices of every edge, if sets are same, then there
-	// is cycle in graph.
-	for (int e = 0; e < E; ++e) {
-		int x = find(subsets, graph->edge[e].src);
-		int y = find(subsets, graph->edge[e].dest);
-
-		if (x == y)
-			return 1;
-
-		Union(subsets, x, y);
-	}
-	return 0;
-}
-
-// Driver code
 int main()
 {
-	/* Let us create the following graph
-		0
-		|  \
-		|   \
-		1-----2 */
+    vector<char> a = {'E', 'F', 'I', 'D', 'C', 'A', 'J', 'L', 'G', 'K', 'B', 'H'};
+    UnionFind uf = UnionFind(a);
 
-	int V = 3, E = 3;
-	struct Graph* graph = createGraph(V, E);
+    uf.union_obj('C', 'K');
+    uf.union_obj('F', 'E');
+    uf.union_obj('A', 'J');
+    uf.union_obj('A', 'B');
+    uf.union_obj('C', 'D');
+    uf.union_obj('D', 'I');
+    uf.union_obj('L', 'F');
+    uf.union_obj('C', 'A');
+    uf.union_obj('A', 'B');
+    uf.union_obj('H', 'G');
+    uf.union_obj('H', 'F');
+    uf.union_obj('H', 'B');
 
-	// add edge 0-1
-	graph->edge[0].src = 0;
-	graph->edge[0].dest = 1;
-
-	// add edge 1-2
-	graph->edge[1].src = 1;
-	graph->edge[1].dest = 2;
-
-	// add edge 0-2
-	graph->edge[2].src = 0;
-	graph->edge[2].dest = 2;
-
-	if (isCycle(graph))
-		printf("Graph contains cycle");
-	else
-		printf("Graph doesn't contain cycle");
-
-	return 0;
+    return 0;
 }
