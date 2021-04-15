@@ -3,7 +3,7 @@
 using namespace std;
 
 
-// szukamy indeksu najbliższej wartości >= x
+// szukamy indeksu najbliższej wartości > x
 int after(int &x, vector<int> &arr) {
 	int l = 0, mid, r = arr.size();
 

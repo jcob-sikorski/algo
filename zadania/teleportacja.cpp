@@ -36,6 +36,7 @@ int beforeeq(long long int x, vector<long long int> &arr) {
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(0);
+    cout.tie(0);
 
     long long int n; cin >> n;
     long long int sum = 0;
